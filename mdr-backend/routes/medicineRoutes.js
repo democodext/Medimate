@@ -61,21 +61,7 @@ router.get("/", (req, res) => {
 
 // Get all medicines (this will be used in your 'show' logic)
 router.get("/all", (req, res) => {
-    fs.readdir("uploads", (err, files) => {
-    if (err) return res.status(500).json({ error: "Failed to read medicines" });
-
-    const meds = files.map((file) => {
-        const [name, notesWithExt] = file.split("__");
-        const notes = notesWithExt?.replace(/\.[^/.]+$/, "") || "No instructions";
-        return {
-        name: name || "Unknown",
-        notes: notes,
-        image: file,
-        };
-    });
-
-    res.json(meds);
-    });
+    res.json(medicines);
 });
 // 
 

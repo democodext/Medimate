@@ -221,7 +221,7 @@
                 speakBtn.textContent = "🔊 Speak";
                 speakBtn.style.marginLeft = "10px";
                 speakBtn.onclick = () => {
-                    const msg = new SpeechSynthesisUtterance(`This is your medicine: ${med.name}`);
+                    const msg = new SpeechSynthesisUtterance(`This is your medicine: ${medicine_name}`);
                     msg.lang = document.getElementById("language-select").value;
                     speechSynthesis.speak(msg);
                 };
