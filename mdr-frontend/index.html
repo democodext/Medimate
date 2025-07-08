@@ -212,7 +212,7 @@
                 // Image
                 const img = document.createElement("img");
                 img.src = `http://localhost:5000/uploads/${med.image}`;
-                img.alt = med.name;
+                img.alt = med.medicine_name;
                 img.style.width = "120px";
                 img.style.borderRadius = "10px";
 
@@ -221,7 +221,7 @@
                 speakBtn.textContent = "🔊 Speak";
                 speakBtn.style.marginLeft = "10px";
                 speakBtn.onclick = () => {
-                    const msg = new SpeechSynthesisUtterance(`This is your medicine: ${medicine_name}`);
+                    const msg = new SpeechSynthesisUtterance(`This is your medicine: ${med.medicine_name}`);
                     msg.lang = document.getElementById("language-select").value;
                     speechSynthesis.speak(msg);
                 };
