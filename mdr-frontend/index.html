@@ -13,7 +13,7 @@
     body {
         margin: 0;
         padding: 20px;
-        background: linear-gradient(to bottom right, #d0f0fd, #f5e8ff);
+        background: linear-gradient(to bottom right, #1fc0ff, #d098fa);
         min-height: 100vh;
         display: flex;
         flex-direction: column;
@@ -29,7 +29,7 @@
         background: #fff;
         padding: 30px;
         border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.0,0.5);
         max-width: 500px;
         width: 100%;
     }
@@ -137,22 +137,19 @@
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const data = {
-        name: document.getElementById('name').value,
-        time: document.getElementById('time').value,
-        notes: document.getElementById('notes').value,
-        };
+        const formData = new FormData();
+        formData.append("image", document.getElementById('image').files[0]);
+        formData.append("name", document.getElementById('name').value);
+        formData.append("time", document.getElementById('time').value);
+        formData.append("notes", document.getElementById('notes').value);
+        
+        try{
+            const response = await fetch('http://localhost:5000/api/medicines/add', {
+                method: 'POST',
+                body: formData
+            });    
 
-    try {
-        const response = await fetch('http://localhost:5000/api/medicines/add', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-        },
-            body: JSON.stringify(data),
-        });
-
-        const result = await response.json();
+            const result = await response.json();
 
         if (response.ok) {
             responseMsg.textContent = "✅ Medicine added successfully!";
@@ -243,8 +240,7 @@
                                 loadMedicines();
                             });
                     }
-                };
-
+                    };
                 container.appendChild(img);
                 container.appendChild(speakBtn);
                 container.appendChild(delBtn);
