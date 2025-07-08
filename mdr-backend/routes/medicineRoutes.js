@@ -42,10 +42,13 @@ router.post("/add", upload.single("image"), (req, res) => {
     }
 
     // Save to memory (for now)
+    const image = req.file ? req.file.filename : null;
+
     medicines.push({
         medicine_name: name,
         dosage_time: time,
         instructions: notes || "",
+        image: image
     });
 
     return res.status(200).json({ message: "Medicine saved successfully!" });
