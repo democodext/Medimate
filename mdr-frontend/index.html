@@ -108,6 +108,9 @@
         <input type="time" id="time" required />
 
         <label for="notes">Instructions:</label>
+        <label for="duration">Days to Repeat:</label>
+        <input type="number" id="duration" min="1" max="30" value="1" />
+
         <textarea id="notes" rows="2" placeholder="e.g. After lunch"></textarea>
 
         <label for="language-select">Select Language:</label>
@@ -142,6 +145,8 @@
         formData.append("name", document.getElementById('name').value);
         formData.append("time", document.getElementById('time').value);
         formData.append("notes", document.getElementById('notes').value);
+        formData.append("duration", document.getElementById('duration').value);
+
         
         try{
             const response = await fetch('http://localhost:5000/api/medicines/add', {
@@ -173,25 +178,37 @@
         .then(res => res.json())
         .then(data => {
             data.forEach(med => {
-            const medTime = med.dosage_time.split(':').slice(0, 2).join(':');
-            if (medTime === currentTime) {
-                for (let i = 0; i < 5; i++) {
-                setTimeout(() => {
-                    speakReminder(med.medicine_name);
-                }, i * 3000);
+                const medTime = med.dosage_time.split(':').slice(0, 2).join(':');
+                if (medTime === currentTime && med.days_left > 0) {
+                    for (let i = 0; i < 5; i++) {
+                        setTimeout(() => {
+                            speakReminder(med.medicine_name || med.name);
+                        }, i * 3000); // 3 seconds gap between each
+                    }
+
+                    med.days_left--; // reduce days
                 }
-            }
-        })
+            });
         })
         .catch(err => console.error("Reminder Error:", err));
-    }
-
+}
     function speakReminder(name) {
         const lang = document.getElementById("language-select").value;
-        const msg = new SpeechSynthesisUtterance(`It's time to take your medicine: ${name}`);
-        msg.lang = lang;
-        window.speechSynthesis.speak(msg);
+        let msgText = "";
+
+        if (lang === "hi-IN") {
+            msgText = `यह आपकी दवा है: ${name}`;
+        } else if (lang === "ta-IN") {
+            msgText = `இது உங்கள் மருந்து: ${name}`;
+        } else {
+            msgText = `It's time to take your medicine: ${name}`;
     }
+
+    const msg = new SpeechSynthesisUtterance(msgText);
+    msg.lang = lang;
+    speechSynthesis.speak(msg);
+}
+
 
     // Auto reminder every 1 minute
     setInterval(checkReminderTime, 60000);
@@ -221,7 +238,7 @@
                 speakBtn.textContent = "🔊 Speak";
                 speakBtn.style.marginLeft = "10px";
                 speakBtn.onclick = () => {
-                    const msg = new SpeechSynthesisUtterance(`This is your medicine: ${med.medicine_name}`);
+                    const msg = new SpeechSynthesisUtterance(`This is your medicine: ${med.name || med.medicine_name}`);
                     msg.lang = document.getElementById("language-select").value;
                     speechSynthesis.speak(msg);
                 };
